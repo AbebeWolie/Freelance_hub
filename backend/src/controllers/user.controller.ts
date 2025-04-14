@@ -51,3 +51,9 @@ const getUserById = async(req:Request,res:Response) =>{
         })
     }
 }
+
+
+export default {
+    getUser,
+    getUserById
+}
