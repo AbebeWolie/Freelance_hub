@@ -281,6 +281,8 @@ export default {
     updateUser,
     getUser,
     getUserById,
-    getProfile
+    getProfile,
+    loginUser,
+    searchUser
    
 }
