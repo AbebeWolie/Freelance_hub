@@ -1,11 +1,10 @@
 import { Request,Response } from "express"
 import { Bookmark } from "../models/bookMarks.model"
-import { Message } from "../models/message.model";
 
 // get bookmark
 const getBookmarks = async(req:Request,res:Response) =>{
     try{
-        const bookmark = await Bookmark.find();
+        const bookmark = await Bookmark.find().populate('userId jobId');
         if(!bookmark){
             return res.status(404).json({
                 success:false,
