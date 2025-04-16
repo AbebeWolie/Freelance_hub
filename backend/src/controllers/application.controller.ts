@@ -135,11 +135,10 @@ const deleteApp = async (req:Request,res:Response) =>{
     }
 }
 
-export default {
+export {
     getApplication,
     getApplicationById,
     createApplication,
     updateApplication,
     deleteApp
-
 }
