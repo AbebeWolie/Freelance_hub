@@ -1,4 +1,4 @@
-import {Request,Response} from 'express';
+import {application, Request,Response} from 'express';
 import { Application } from '../models/application.model';
 
 // Get all application
@@ -29,9 +29,8 @@ const getApplication = async(req:Request,res:Response) =>{
 // Get application by id
 
 const getApplicationById = async(req:Request,res:Response) =>{
-    const {appId} = req.params;
     try{
-        const app = await Application.findById(appId);
+        const app = await Application.findById(req.params.id);
         if(!app){
             return res.status(404).json({
                 success:false,
@@ -40,7 +39,8 @@ const getApplicationById = async(req:Request,res:Response) =>{
         }
         return res.status(200).json({
             success:true,
-            message:"Application fetched"
+            message:"Application fetched",
+            data:app
         })
 
     }catch(error){
@@ -82,4 +82,64 @@ const createApplication = async(req:Request,res:Response) =>{
             message:"Internal server"
         })
     }
+}
+
+
+
+const updateApplication = async(req:Request,res:Response) =>{
+    const {jobId,freelancerId,coverLetter,status} = req.body;
+    try{
+        const app = await Application.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        if(!app){
+            return res.status(404).json({
+                success:false,
+                message:"Application not found"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"Application",
+            data:app
+        })
+    }catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Internal server error",
+            error:error instanceof Error? error.message:String(error)
+        })
+    }
+}
+
+const deleteApp = async (req:Request,res:Response) =>{
+    try{
+        const app = await Application.findByIdAndDelete(req.params.id)
+        if(!app){
+            return res.status(404).json({
+                success:false,
+                message:"Application not found",
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"Application successfully deleted",
+            data:app
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Internal server error",
+            error:error instanceof Error? error.message: String(error)
+        })
+
+    }
+}
+
+export default {
+    getApplication,
+    getApplicationById,
+    createApplication,
+    updateApplication,
+    deleteApp
+
 }
