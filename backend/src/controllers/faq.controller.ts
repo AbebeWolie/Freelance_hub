@@ -1,56 +1,20 @@
-import { Request, Response } from "express";
-import { FAQ } from "../models/faq.model";
-
-// Create FAQ
-const createFAQ = async (req: Request, res: Response) => {
-    try {
-        const { question, answer } = req.body;
-
-        if (!question || !answer) {
-            return res.status(400).json({
-                success: false,
-                message: "Both question and answer are required",
-            });
-        }
-
-        const newFAQ = new FAQ({ question, answer });
-        await newFAQ.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "FAQ successfully created",
-            data: newFAQ,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
+import { Request, Response } from 'express';
+import { FAQ } from '../models/faq.model';
+import { HTTP_STATUS } from '../constants/status';
 
 // Get all FAQs
 const getFAQs = async (req: Request, res: Response) => {
     try {
         const faqs = await FAQ.find();
-
-        if (faqs.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No FAQs found",
-            });
-        }
-
-        return res.status(200).json({
+        return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "FAQs successfully fetched",
+            message: 'All FAQs fetched successfully',
             data: faqs,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error occurred while fetching FAQs',
             error: error instanceof Error ? error.message : String(error),
         });
     }
@@ -59,95 +23,98 @@ const getFAQs = async (req: Request, res: Response) => {
 // Get FAQ by ID
 const getFAQById = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const faq = await FAQ.findById(id);
-
+        const faq = await FAQ.findById(req.params.id);
         if (!faq) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
-                message: "FAQ not found",
+                message: 'FAQ not found',
             });
         }
-
-        return res.status(200).json({
+        return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "FAQ successfully fetched",
+            message: 'FAQ fetched successfully',
             data: faq,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error occurred while fetching FAQ',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
-// Delete FAQ by ID
-const deleteFAQById = async (req: Request, res: Response) => {
+// Create new FAQ
+const createFAQ = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const existing = await FAQ.findById(id);
-
-        if (!existing) {
-            return res.status(404).json({
-                success: false,
-                message: "FAQ not found to delete",
-            });
-        }
-
-        await FAQ.findByIdAndDelete(id);
-
-        return res.status(200).json({
+        const { question, answer } = req.body;
+        const newFAQ = new FAQ({ question, answer });
+        await newFAQ.save();
+        return res.status(HTTP_STATUS.CREATED).json({
             success: true,
-            message: "FAQ successfully deleted",
+            message: 'FAQ created successfully',
+            data: newFAQ,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error occurred while creating FAQ',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
-// Optional: Update FAQ by ID
-const updateFAQById = async (req: Request, res: Response) => {
+// Update FAQ
+const updateFAQ = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const { question, answer } = req.body;
-
-        const updatedFAQ = await FAQ.findByIdAndUpdate(
-            id,
-            { question, answer },
-            { new: true, runValidators: true }
-        );
-
+        const updatedFAQ = await FAQ.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedFAQ) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
-                message: "FAQ not found to update",
+                message: 'FAQ not found',
             });
         }
-
-        return res.status(200).json({
+        return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "FAQ successfully updated",
+            message: 'FAQ updated successfully',
             data: updatedFAQ,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error occurred while updating FAQ',
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+
+// Delete FAQ
+const deleteFAQ = async (req: Request, res: Response) => {
+    try {
+        const deletedFAQ = await FAQ.findByIdAndDelete(req.params.id);
+        if (!deletedFAQ) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'FAQ not found',
+            });
+        }
+        return res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'FAQ deleted successfully',
+        });
+    } catch (error) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error occurred while deleting FAQ',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
 export {
-    createFAQ,
     getFAQs,
     getFAQById,
-    deleteFAQById,
-    updateFAQById, // optional
+    createFAQ,
+    updateFAQ,
+    deleteFAQ,
 };

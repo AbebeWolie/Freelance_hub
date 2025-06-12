@@ -1,162 +1,84 @@
 import { Request, Response } from "express";
-import { Payment } from "../models/payment.model";
+import { PaymentMethod } from "../models/paymentMethods.model";
+import { HTTP_STATUS } from "../constants/status";
 
-// Create a new payment
-const createPayment = async (req: Request, res: Response) => {
+// Get all payment methods for a user
+const getUserPaymentMethods = async (req: Request, res: Response) => {
   try {
-    const { userId, jobId, amount, method } = req.body;
+    const { userId } = req.params;
 
-    if (!userId || !jobId || !amount || !method) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required (userId, jobId, amount, method)",
-      });
-    }
+    const methods = await PaymentMethod.find({ userId });
 
-    const payment = new Payment({
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "Payment methods fetched successfully",
+      data: methods,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch payment methods",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Add a new payment method
+const addPaymentMethod = async (req: Request, res: Response) => {
+  try {
+    const { userId, type, details } = req.body;
+
+    const newMethod = new PaymentMethod({
       userId,
-      jobId,
-      amount,
-      method,
-      status: "pending",
+      type,
+      details,
     });
 
-    await payment.save();
+    await newMethod.save();
 
-    return res.status(201).json({
+    res.status(HTTP_STATUS.CREATED).json({
       success: true,
-      message: "Payment created successfully",
-      data: payment,
+      message: "Payment method added successfully",
+      data: newMethod,
     });
-
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to add payment method",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Get all payments
-const getAllPayments = async (_req: Request, res: Response) => {
-  try {
-    const payments = await Payment.find().populate("userId jobId");
-    return res.status(200).json({
-      success: true,
-      message: "Payments fetched successfully",
-      data: payments,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Get payment by ID
-const getPaymentById = async (req: Request, res: Response) => {
+// Delete a payment method
+const deletePaymentMethod = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const payment = await Payment.findById(id).populate("userId jobId");
-
-    if (!payment) {
-      return res.status(404).json({
-        success: false,
-        message: "Payment not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Payment fetched successfully",
-      data: payment,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Update payment status
-const updatePaymentStatus = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    if (!["pending", "completed", "failed"].includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid status value",
-      });
-    }
-
-    const payment = await Payment.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
-
-    if (!payment) {
-      return res.status(404).json({
-        success: false,
-        message: "Payment not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Payment status updated",
-      data: payment,
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Delete a payment
-const deletePayment = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const deleted = await Payment.findByIdAndDelete(id);
+    const deleted = await PaymentMethod.findByIdAndDelete(id);
 
     if (!deleted) {
-      return res.status(404).json({
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
-        message: "Payment not found",
+        message: "Payment method not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Payment deleted successfully",
+      message: "Payment method deleted",
     });
-
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to delete payment method",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
 export {
-  createPayment,
-  getAllPayments,
-  getPaymentById,
-  updatePaymentStatus,
-  deletePayment,
+  getUserPaymentMethods,
+  addPaymentMethod,
+  deletePaymentMethod,
 };

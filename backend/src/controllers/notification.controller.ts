@@ -1,17 +1,32 @@
 import { Request, Response } from "express";
 import { Notification } from "../models/notification.model";
+import { HTTP_STATUS } from "../constants/status";
 
-// Create a notification
+// Get notifications for a user
+const getUserNotifications = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const notifications = await Notification.find({ userId }).sort({ _id: -1 });
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "Notifications fetched successfully",
+      data: notifications,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch notifications",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Create a new notification
 const createNotification = async (req: Request, res: Response) => {
   try {
     const { userId, type, message } = req.body;
-
-    if (!userId || !type || !message) {
-      return res.status(400).json({
-        success: false,
-        message: "userId, type, and message are required.",
-      });
-    }
 
     const newNotification = new Notification({
       userId,
@@ -21,45 +36,22 @@ const createNotification = async (req: Request, res: Response) => {
 
     await newNotification.save();
 
-    return res.status(201).json({
+    res.status(HTTP_STATUS.CREATED).json({
       success: true,
-      message: "Notification created successfully",
+      message: "Notification created",
       data: newNotification,
     });
-
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Get notifications for a specific user
-const getNotificationsByUser = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-
-    const notifications = await Notification.find({ userId }).sort({ _id: -1 });
-
-    return res.status(200).json({
-      success: true,
-      message: "Notifications fetched successfully",
-      data: notifications,
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
+      message: "Failed to create notification",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
 // Mark a notification as read
-const markAsRead = async (req: Request, res: Response) => {
+const markNotificationAsRead = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -70,22 +62,21 @@ const markAsRead = async (req: Request, res: Response) => {
     );
 
     if (!updated) {
-      return res.status(404).json({
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
         message: "Notification not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
       message: "Notification marked as read",
       data: updated,
     });
-
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to update notification",
       error: error instanceof Error ? error.message : String(error),
     });
   }
@@ -99,29 +90,28 @@ const deleteNotification = async (req: Request, res: Response) => {
     const deleted = await Notification.findByIdAndDelete(id);
 
     if (!deleted) {
-      return res.status(404).json({
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
         message: "Notification not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Notification deleted successfully",
+      message: "Notification deleted",
     });
-
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to delete notification",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
 export {
+  getUserNotifications,
   createNotification,
-  getNotificationsByUser,
-  markAsRead,
+  markNotificationAsRead,
   deleteNotification,
 };

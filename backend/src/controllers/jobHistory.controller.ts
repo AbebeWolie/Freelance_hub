@@ -1,124 +1,110 @@
 import { Request, Response } from "express";
-import { JobHistory } from "../models/jobHistory.model"; // Adjust path based on your project
+import { JobHistory } from "../models/jobHistory.model";
+import { HTTP_STATUS } from "../constants/status";
 
-// Create Job History Entry
+// Get all job history records
+const getAllJobHistories = async (_req: Request, res: Response) => {
+  try {
+    const history = await JobHistory.find()
+      .populate("jobId freelancerId clientId");
+    
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "All job histories retrieved",
+      data: history,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Error fetching job histories",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Get job history by ID
+const getJobHistoryById = async (req: Request, res: Response) => {
+  try {
+    const history = await JobHistory.findById(req.params.id)
+      .populate("jobId freelancerId clientId");
+
+    if (!history) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: "Job history not found",
+      });
+    }
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "Job history retrieved",
+      data: history,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Error fetching job history",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Create a job history record
 const createJobHistory = async (req: Request, res: Response) => {
-    try {
-        const { jobId, freelancerId, clientId, action } = req.body;
+  try {
+    const { jobId, freelancerId, clientId, action } = req.body;
 
-        if (!jobId || !freelancerId || !clientId || !action) {
-            return res.status(400).json({
-                success: false,
-                message: "All fields are required: jobId, freelancerId, clientId, action",
-            });
-        }
+    const newHistory = new JobHistory({
+      jobId,
+      freelancerId,
+      clientId,
+      action,
+    });
 
-        const newEntry = new JobHistory({
-            jobId,
-            freelancerId,
-            clientId,
-            action,
-        });
+    await newHistory.save();
 
-        await newEntry.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "Job history entry created successfully",
-            data: newEntry,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
+    res.status(HTTP_STATUS.CREATED).json({
+      success: true,
+      message: "Job history created successfully",
+      data: newHistory,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Error creating job history",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 };
 
-// Get All Job History
-const getAllJobHistories = async (req: Request, res: Response) => {
-    try {
-        const history = await JobHistory.find()
-            .populate("jobId", "title")
-            .populate("freelancerId", "name email")
-            .populate("clientId", "name email");
+// Delete a job history record
+const deleteJobHistory = async (req: Request, res: Response) => {
+  try {
+    const deleted = await JobHistory.findByIdAndDelete(req.params.id);
 
-        return res.status(200).json({
-            success: true,
-            message: "Job history fetched successfully",
-            data: history,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
+    if (!deleted) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: "Job history not found",
+      });
     }
-};
 
-// Get History by Job ID
-const getJobHistoryByJobId = async (req: Request, res: Response) => {
-    try {
-        const { jobId } = req.params;
-
-        const history = await JobHistory.find({ jobId })
-            .populate("freelancerId", "name email")
-            .populate("clientId", "name email");
-
-        if (!history || history.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No history found for this job",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Job history fetched successfully",
-            data: history,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
-
-// (Optional) Delete History by ID
-const deleteJobHistoryById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-
-        const existing = await JobHistory.findById(id);
-        if (!existing) {
-            return res.status(404).json({
-                success: false,
-                message: "History entry not found",
-            });
-        }
-
-        await JobHistory.findByIdAndDelete(id);
-
-        return res.status(200).json({
-            success: true,
-            message: "History entry deleted successfully",
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "Job history deleted successfully",
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Error deleting job history",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 };
 
 export {
-    createJobHistory,
-    getAllJobHistories,
-    getJobHistoryByJobId,
-    deleteJobHistoryById, // Optional
+  getAllJobHistories,
+  getJobHistoryById,
+  createJobHistory,
+  deleteJobHistory,
 };

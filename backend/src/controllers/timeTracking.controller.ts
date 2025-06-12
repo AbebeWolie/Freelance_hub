@@ -1,19 +1,14 @@
 import { Request, Response } from "express";
 import { TimeTracking } from "../models/timeTracking.model";
+import { HTTP_STATUS } from "../constants/status";
 
-// Create a new time tracking record
+// Create a new time tracking entry
 const createTimeTracking = async (req: Request, res: Response) => {
   try {
-    const { jobId, freelancerId, startTime, endTime, totalHours } = req.body;
+    const { jobId, freelancerId, startTime, endTime } = req.body;
 
-    if (!jobId || !freelancerId || !startTime || !endTime || !totalHours) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields",
-      });
-    }
+    const totalHours = (new Date(endTime).getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60);
 
-    // Create a new time tracking record
     const newTimeTracking = new TimeTracking({
       jobId,
       freelancerId,
@@ -24,153 +19,118 @@ const createTimeTracking = async (req: Request, res: Response) => {
 
     await newTimeTracking.save();
 
-    return res.status(201).json({
+    res.status(HTTP_STATUS.CREATED).json({
       success: true,
-      message: "Time tracking record created successfully",
+      message: "Time tracking entry created successfully",
       data: newTimeTracking,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to create time tracking entry",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Get all time tracking records
-const getAllTimeTracking = async (_req: Request, res: Response) => {
-  try {
-    const timeTrackingRecords = await TimeTracking.find()
-      .populate("jobId freelancerId");
-
-    return res.status(200).json({
-      success: true,
-      message: "All time tracking records fetched",
-      data: timeTrackingRecords,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Get time tracking records for a specific freelancer or job
+// Get all time tracking entries for a freelancer or job
 const getTimeTrackingByFreelancer = async (req: Request, res: Response) => {
   try {
-    const timeTracking = await TimeTracking.find({ freelancerId: req.params.freelancerId })
-      .populate("jobId freelancerId");
+    const { freelancerId } = req.params;
 
-    if (!timeTracking || timeTracking.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No time tracking records found for this freelancer",
-      });
-    }
+    const timeTrackings = await TimeTracking.find({ freelancerId });
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Time tracking records fetched successfully",
-      data: timeTracking,
+      message: "Time tracking entries fetched successfully",
+      data: timeTrackings,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to fetch time tracking entries",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Get time tracking records for a specific job
 const getTimeTrackingByJob = async (req: Request, res: Response) => {
   try {
-    const timeTracking = await TimeTracking.find({ jobId: req.params.jobId })
-      .populate("jobId freelancerId");
+    const { jobId } = req.params;
 
-    if (!timeTracking || timeTracking.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No time tracking records found for this job",
-      });
-    }
+    const timeTrackings = await TimeTracking.find({ jobId });
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Time tracking records fetched successfully",
-      data: timeTracking,
+      message: "Time tracking entries for the job fetched successfully",
+      data: timeTrackings,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to fetch time tracking entries",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Update a time tracking record
+// Update time tracking entry (e.g., modify start time, end time, or recalculate hours)
 const updateTimeTracking = async (req: Request, res: Response) => {
   try {
-    const { startTime, endTime, totalHours } = req.body;
+    const { id } = req.params;
+    const { startTime, endTime } = req.body;
 
-    if (!startTime || !endTime || !totalHours) {
-      return res.status(400).json({
-        success: false,
-        message: "Start time, end time, and total hours are required to update",
-      });
-    }
+    const totalHours = (new Date(endTime).getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60);
 
     const updatedTimeTracking = await TimeTracking.findByIdAndUpdate(
-      req.params.id,
+      id,
       { startTime, endTime, totalHours },
       { new: true }
     );
 
     if (!updatedTimeTracking) {
-      return res.status(404).json({
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
-        message: "Time tracking record not found",
+        message: "Time tracking entry not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Time tracking record updated successfully",
+      message: "Time tracking entry updated successfully",
       data: updatedTimeTracking,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to update time tracking entry",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Delete a time tracking record
+// Delete a time tracking entry
 const deleteTimeTracking = async (req: Request, res: Response) => {
   try {
-    const deletedTimeTracking = await TimeTracking.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+
+    const deletedTimeTracking = await TimeTracking.findByIdAndDelete(id);
 
     if (!deletedTimeTracking) {
-      return res.status(404).json({
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
-        message: "Time tracking record not found",
+        message: "Time tracking entry not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Time tracking record deleted successfully",
+      message: "Time tracking entry deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to delete time tracking entry",
       error: error instanceof Error ? error.message : String(error),
     });
   }
@@ -178,7 +138,6 @@ const deleteTimeTracking = async (req: Request, res: Response) => {
 
 export {
   createTimeTracking,
-  getAllTimeTracking,
   getTimeTrackingByFreelancer,
   getTimeTrackingByJob,
   updateTimeTracking,

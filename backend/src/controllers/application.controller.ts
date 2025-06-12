@@ -1,144 +1,118 @@
-import {application, Request,Response} from 'express';
+import { HTTP_STATUS } from '../constants/status';
 import { Application } from '../models/application.model';
+import { Request,Response } from 'express';
 
-// Get all application
-
-const getApplication = async(req:Request,res:Response) =>{
+// get all application
+const getApplications =  async(req : Request, res : Response)=>{
     try{
-        const app = await Application.find();
-        if(!app){
-            return res.status(404).json({
-                success:false,
-                message:"Application not found"
-            })
-        }
-        return res.status(200).json({
-            success:true,
-            message:"All Applictions successfully fetched",
-            data:app
-        })
-
+        const applications = await Application.find();
+        return res.status(HTTP_STATUS.OK).json({
+            success : true,
+            message : 'All applications fethed',
+            data : applications
+        });
     }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"Internal server error"
-        })
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success : false,
+            message : "Internal Server occured while fetchin data",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 }
 
-// Get application by id
-
-const getApplicationById = async(req:Request,res:Response) =>{
+// get applicatins by id
+const getApplicationById = async(req : Request, res : Response)=>{
     try{
-        const app = await Application.findById(req.params.id);
-        if(!app){
-            return res.status(404).json({
-                success:false,
-                message:"Application not found"
-            })
+        const application = await Application.findById(req.params.id);
+        if(!application){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success : false,
+                message : 'Application not found'
+            });
         }
-        return res.status(200).json({
-            success:true,
-            message:"Application fetched",
-            data:app
-        })
-
+        return res.status(HTTP_STATUS.OK).json({
+            success : true,
+            message : 'Application Found',
+            data : application
+        });
     }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"Internal server error"
-        })
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success : false,
+            message : "Internal Server occured while fetchin data",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 }
 
-// Create application
-
-const createApplication = async(req:Request,res:Response) =>{
-    const {jobId,freelancerId,coverLetter,status} = req.body
-    if(!jobId || !freelancerId || !coverLetter || !status){
-        return res.status(400).json({
-            success:false,
-            message:"Required fields missed"
-        })
-    }
+// create a new application 
+const createApplication = async(req : Request,res : Response)=>{
+    const appId = req.params.id;
     try{
-        const existingApp = await Application.findOne({jobId,freelancerId})
-        if(existingApp){
-            return res.status(409).json({
-                success:false,
-                message:"Application already existed"
-            })
+        const {jobId,freelancerId,coverLetter,status,createdAt} = req.body;
+        const existingApplication = await Application.findOne({appId,freelancerId});
+        if(existingApplication){
+            return res.status(HTTP_STATUS.CONFLICT).json({
+                success : false,
+                message : "Application already exists"
+            });
         }
-        const application = new Application({jobId,freelancerId,coverLetter,status});
-        await application.save();
-        return res.status(200).json({
-            success:true,
-            message:"Application successfully created"
-        })
-
+        const newApplication = new Application({jobId,freelancerId,coverLetter,status,createdAt});
+        await newApplication.save();
+        return res.status(HTTP_STATUS.CREATED).json({
+            success : true,
+            message : "Application successfuly created"
+        });
     }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"Internal server"
-        })
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success : false,
+            message : "Internal Server occured while fetchin data",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 }
 
-
-
-const updateApplication = async(req:Request,res:Response) =>{
-    const {jobId,freelancerId,coverLetter,status} = req.body;
+// update application by id
+const updateApplicationById = async(req : Request, res : Response)=>{
     try{
-        const app = await Application.findByIdAndUpdate(req.params.id,req.body,{new:true})
-        if(!app){
-            return res.status(404).json({
-                success:false,
-                message:"Application not found"
-            })
+        const updateApplication = await Application.findByIdAndUpdate(req.params.id,req.body,{ new : true});
+        if(!updateApplication){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success : false,
+                message : "Application not found "
+            });
         }
-        return res.status(200).json({
-            success:true,
-            message:"Application",
-            data:app
-        })
+        return res.status(HTTP_STATUS.OK).json({
+            success : true,
+            message : "Application successfully updated "
+        });
     }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"Internal server error",
-            error:error instanceof Error? error.message:String(error)
-        })
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success : false,
+            message : "Internal Server occured while fetchin data",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 }
 
-const deleteApp = async (req:Request,res:Response) =>{
+// delete application by id
+const deleteApplicationById = async(req : Request, res : Response)=>{
     try{
-        const app = await Application.findByIdAndDelete(req.params.id)
-        if(!app){
-            return res.status(404).json({
-                success:false,
-                message:"Application not found",
-            })
+        const deleteApplication = await Application.findByIdAndDelete(req.params.id);
+        if(!deleteApplication){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success : false,
+                message : "Application not found "
+            });
         }
-        return res.status(200).json({
-            success:true,
-            message:"Application successfully deleted",
-            data:app
-        })
-
+        return res.status(HTTP_STATUS.OK).json({
+            success : true,
+            message : "Application successfully deleted "
+        });
     }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"Internal server error",
-            error:error instanceof Error? error.message: String(error)
-        })
-
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success : false,
+            message : "Internal Server occured while fetchin data",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
-}
-
-export {
-    getApplication,
-    getApplicationById,
-    createApplication,
-    updateApplication,
-    deleteApp
 }

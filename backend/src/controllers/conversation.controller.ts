@@ -1,63 +1,20 @@
-import { Request, Response } from "express";
-import { Conversation } from "../models/conversation.model";
-
-// Create a new conversation
-const createConversation = async (req: Request, res: Response) => {
-    try {
-        const { members, lastMessage } = req.body;
-
-        if (!members || !Array.isArray(members) || members.length < 2) {
-            return res.status(400).json({
-                success: false,
-                message: "At least two members are required to start a conversation",
-            });
-        }
-
-        const newConversation = new Conversation({
-            members,
-            lastMessage,
-            lastUpdated: new Date(),
-        });
-
-        await newConversation.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "Conversation successfully created",
-            data: newConversation,
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
+import { Request, Response } from 'express';
+import { Conversation } from '../models/conversation.model';
+import { HTTP_STATUS } from '../constants/status';
 
 // Get all conversations
 const getConversations = async (req: Request, res: Response) => {
     try {
-        const conversations = await Conversation.find().populate("members");
-
-        if (conversations.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No conversations found",
-            });
-        }
-
-        return res.status(200).json({
+        const conversations = await Conversation.find().populate('members');
+        return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "Conversations successfully fetched",
+            message: 'All conversations fetched',
             data: conversations,
         });
-
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error while fetching conversations',
             error: error instanceof Error ? error.message : String(error),
         });
     }
@@ -66,65 +23,117 @@ const getConversations = async (req: Request, res: Response) => {
 // Get conversation by ID
 const getConversationById = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const conversation = await Conversation.findById(id).populate("members");
-
+        const conversation = await Conversation.findById(req.params.id).populate('members');
         if (!conversation) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
-                message: "Conversation not found",
+                message: 'Conversation not found',
             });
         }
-
-        return res.status(200).json({
+        return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "Conversation successfully fetched",
+            message: 'Conversation found',
             data: conversation,
         });
-
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error while fetching conversation',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
-// Delete conversation by ID
-const deleteConversationById = async (req: Request, res: Response) => {
+// Create new conversation
+const createConversation = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const existing = await Conversation.findById(id);
+        const { members, lastMessage } = req.body;
 
-        if (!existing) {
-            return res.status(404).json({
+        // Optional: Prevent duplicate 1-on-1 conversation
+        const existingConversation = await Conversation.findOne({ members: { $all: members, $size: members.length } });
+        if (existingConversation) {
+            return res.status(HTTP_STATUS.CONFLICT).json({
                 success: false,
-                message: "Conversation not found to delete",
+                message: 'Conversation already exists',
             });
         }
 
-        await Conversation.findByIdAndDelete(id);
+        const newConversation = new Conversation({ members, lastMessage });
+        await newConversation.save();
 
-        return res.status(200).json({
+        return res.status(HTTP_STATUS.CREATED).json({
             success: true,
-            message: "Conversation successfully deleted",
+            message: 'Conversation successfully created',
+            data: newConversation,
         });
-
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error while creating conversation',
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+
+// Update conversation (e.g., lastMessage and lastUpdated)
+const updateConversation = async (req: Request, res: Response) => {
+    try {
+        const { lastMessage } = req.body;
+        const updated = await Conversation.findByIdAndUpdate(
+            req.params.id,
+            { lastMessage, lastUpdated: Date.now() },
+            { new: true }
+        );
+
+        if (!updated) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'Conversation not found',
+            });
+        }
+
+        return res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'Conversation updated',
+            data: updated,
+        });
+    } catch (error) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error while updating conversation',
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+
+// Delete conversation
+const deleteConversation = async (req: Request, res: Response) => {
+    try {
+        const deleted = await Conversation.findByIdAndDelete(req.params.id);
+        if (!deleted) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'Conversation not found',
+            });
+        }
+
+        return res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'Conversation deleted',
+        });
+    } catch (error) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error while deleting conversation',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
 export {
-    createConversation,
     getConversations,
     getConversationById,
-    deleteConversationById,
+    createConversation,
+    updateConversation,
+    deleteConversation,
 };
-
-

@@ -1,17 +1,34 @@
 import { Request, Response } from "express";
 import { Message } from "../models/message.model";
+import { HTTP_STATUS } from "../constants/status";
 
-// Send a message
+// Get all messages in a conversation
+const getMessagesByConversation = async (req: Request, res: Response) => {
+  try {
+    const { conversationId } = req.params;
+
+    const messages = await Message.find({ conversationId })
+      .populate("senderId receiverId")
+      .sort({ createdAt: 1 }); // Optional: oldest to newest
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "Messages retrieved successfully",
+      data: messages,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Error retrieving messages",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Send (create) a new message
 const sendMessage = async (req: Request, res: Response) => {
   try {
     const { senderId, receiverId, content, conversationId } = req.body;
-
-    if (!senderId || !receiverId || !content || !conversationId) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields (senderId, receiverId, content, conversationId) are required",
-      });
-    }
 
     const newMessage = new Message({
       senderId,
@@ -22,100 +39,49 @@ const sendMessage = async (req: Request, res: Response) => {
 
     await newMessage.save();
 
-    return res.status(201).json({
+    res.status(HTTP_STATUS.CREATED).json({
       success: true,
       message: "Message sent successfully",
       data: newMessage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Error sending message",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Get all messages in a conversation
-const getMessagesByConversation = async (req: Request, res: Response) => {
-  try {
-    const { conversationId } = req.params;
-
-    const messages = await Message.find({ conversationId })
-      .sort({ createdAt: 1 })
-      .populate("senderId", "name email")
-      .populate("receiverId", "name email");
-
-    return res.status(200).json({
-      success: true,
-      message: "Messages retrieved successfully",
-      data: messages,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Optional: Get message by ID
-const getMessageById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const message = await Message.findById(id);
-
-    if (!message) {
-      return res.status(404).json({
-        success: false,
-        message: "Message not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: message,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Optional: Delete message
-const deleteMessageById = async (req: Request, res: Response) => {
+// Delete a message by ID
+const deleteMessage = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
     const deleted = await Message.findByIdAndDelete(id);
 
     if (!deleted) {
-      return res.status(404).json({
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
         message: "Message not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
       message: "Message deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Error deleting message",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
 export {
-  sendMessage,
   getMessagesByConversation,
-  getMessageById,
-  deleteMessageById,
+  sendMessage,
+  deleteMessage,
 };

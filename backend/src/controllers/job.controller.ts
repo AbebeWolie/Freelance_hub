@@ -1,156 +1,134 @@
-import { Request, Response } from "express";
-import { Job } from "../models/job.model"; // Adjust path based on your structure
+import { Request, Response } from 'express';
+import { Job } from '../models/job.model';
+import { HTTP_STATUS } from '../constants/status';
 
-// Create Job
-const createJob = async (req: Request, res: Response) => {
-    try {
-        const { title, description, category, budget, clientId } = req.body;
-
-        if (!title || !clientId) {
-            return res.status(400).json({
-                success: false,
-                message: "Title and clientId are required",
-            });
-        }
-
-        const newJob = new Job({
-            title,
-            description,
-            category,
-            budget,
-            clientId,
-        });
-
-        await newJob.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "Job successfully created",
-            data: newJob,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
+// Get all jobs
+const getJobs = async (_req: Request, res: Response) => {
+  try {
+    const jobs = await Job.find().populate('clientId applicants');
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: 'All jobs fetched successfully',
+      data: jobs,
+    });
+  } catch (error) {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Error fetching jobs',
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 };
 
-// Get All Jobs
-const getJobs = async (req: Request, res: Response) => {
-    try {
-        const jobs = await Job.find()
-            .populate("clientId", "name email") // Assuming User has name/email
-            .populate("applicants");
-
-        return res.status(200).json({
-            success: true,
-            message: "Jobs fetched successfully",
-            data: jobs,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
-
-// Get Job By ID
+// Get job by ID
 const getJobById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const job = await Job.findById(id)
-            .populate("clientId", "name email")
-            .populate("applicants");
-
-        if (!job) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Job fetched successfully",
-            data: job,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
+  try {
+    const job = await Job.findById(req.params.id).populate('clientId applicants');
+    if (!job) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: 'Job not found',
+      });
     }
+
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: 'Job fetched successfully',
+      data: job,
+    });
+  } catch (error) {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Error fetching job',
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 };
 
-// Update Job By ID
-const updateJobById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const updates = req.body;
+// Create a new job
+const createJob = async (req: Request, res: Response) => {
+  try {
+    const { title, description, category, budget, clientId, status, applicants } = req.body;
 
-        const updatedJob = await Job.findByIdAndUpdate(id, updates, {
-            new: true,
-            runValidators: true,
-        });
+    const newJob = new Job({
+      title,
+      description,
+      category,
+      budget,
+      clientId,
+      status,
+      applicants,
+    });
 
-        if (!updatedJob) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found to update",
-            });
-        }
+    await newJob.save();
 
-        return res.status(200).json({
-            success: true,
-            message: "Job updated successfully",
-            data: updatedJob,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
+    return res.status(HTTP_STATUS.CREATED).json({
+      success: true,
+      message: 'Job created successfully',
+      data: newJob,
+    });
+  } catch (error) {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Error creating job',
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 };
 
-// Delete Job By ID
-const deleteJobById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-
-        const existing = await Job.findById(id);
-        if (!existing) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found to delete",
-            });
-        }
-
-        await Job.findByIdAndDelete(id);
-
-        return res.status(200).json({
-            success: true,
-            message: "Job deleted successfully",
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
+// Update a job
+const updateJob = async (req: Request, res: Response) => {
+  try {
+    const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedJob) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: 'Job not found',
+      });
     }
+
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: 'Job updated successfully',
+      data: updatedJob,
+    });
+  } catch (error) {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Error updating job',
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Delete a job
+const deleteJob = async (req: Request, res: Response) => {
+  try {
+    const deletedJob = await Job.findByIdAndDelete(req.params.id);
+    if (!deletedJob) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: 'Job not found',
+      });
+    }
+
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: 'Job deleted successfully',
+    });
+  } catch (error) {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Error deleting job',
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 };
 
 export {
-    createJob,
-    getJobs,
-    getJobById,
-    updateJobById,
-    deleteJobById,
+  getJobs,
+  getJobById,
+  createJob,
+  updateJob,
+  deleteJob,
 };

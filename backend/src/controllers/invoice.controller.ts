@@ -1,166 +1,129 @@
-import { Request, Response } from "express";
-import { Invoice } from "../models/invoice.model";
+import { Request, Response } from 'express';
+import { Invoice } from '../models/invoice.model';
+import { HTTP_STATUS } from '../constants/status';
 
-// Create Invoice
-const createInvoice = async (req: Request, res: Response) => {
+// Get all invoices
+const getInvoices = async (req: Request, res: Response) => {
     try {
-        const { paymentId, amount, issuedTo, issuedBy, dueDate } = req.body;
+        const invoices = await Invoice.find().populate('paymentId issuedTo issuedBy');
+        return res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'All invoices fetched successfully',
+            data: invoices,
+        });
+    } catch (error) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error occurred while fetching invoices',
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
 
-        if (!paymentId || !amount || !issuedTo || !issuedBy || !dueDate) {
-            return res.status(400).json({
+// Get invoice by ID
+const getInvoiceById = async (req: Request, res: Response) => {
+    try {
+        const invoice = await Invoice.findById(req.params.id).populate('paymentId issuedTo issuedBy');
+        if (!invoice) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
-                message: "All fields are required",
+                message: 'Invoice not found',
             });
         }
+        return res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'Invoice fetched successfully',
+            data: invoice,
+        });
+    } catch (error) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error occurred while fetching invoice',
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+
+// Create a new invoice
+const createInvoice = async (req: Request, res: Response) => {
+    try {
+        const { paymentId, amount, issuedTo, issuedBy, issuedAt, dueDate } = req.body;
 
         const newInvoice = new Invoice({
             paymentId,
             amount,
             issuedTo,
             issuedBy,
+            issuedAt,
             dueDate,
         });
 
         await newInvoice.save();
-
-        return res.status(201).json({
+        return res.status(HTTP_STATUS.CREATED).json({
             success: true,
-            message: "Invoice successfully created",
+            message: 'Invoice created successfully',
             data: newInvoice,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error occurred while creating invoice',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
-// Get All Invoices
-const getInvoices = async (req: Request, res: Response) => {
+// Update invoice
+const updateInvoice = async (req: Request, res: Response) => {
     try {
-        const invoices = await Invoice.find()
-            .populate("paymentId")
-            .populate("issuedTo")
-            .populate("issuedBy");
-
-        if (invoices.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No invoices found",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Invoices successfully fetched",
-            data: invoices,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
-
-// Get Invoice by ID
-const getInvoiceById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const invoice = await Invoice.findById(id)
-            .populate("paymentId")
-            .populate("issuedTo")
-            .populate("issuedBy");
-
-        if (!invoice) {
-            return res.status(404).json({
-                success: false,
-                message: "Invoice not found",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Invoice successfully fetched",
-            data: invoice,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
-
-// Delete Invoice
-const deleteInvoiceById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const existing = await Invoice.findById(id);
-
-        if (!existing) {
-            return res.status(404).json({
-                success: false,
-                message: "Invoice not found to delete",
-            });
-        }
-
-        await Invoice.findByIdAndDelete(id);
-
-        return res.status(200).json({
-            success: true,
-            message: "Invoice successfully deleted",
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error instanceof Error ? error.message : String(error),
-        });
-    }
-};
-
-// Optional: Update Invoice
-const updateInvoiceById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const updates = req.body;
-
-        const updatedInvoice = await Invoice.findByIdAndUpdate(
-            id,
-            updates,
-            { new: true, runValidators: true }
-        );
-
+        const updatedInvoice = await Invoice.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedInvoice) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
-                message: "Invoice not found to update",
+                message: 'Invoice not found',
             });
         }
-
-        return res.status(200).json({
+        return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: "Invoice successfully updated",
+            message: 'Invoice updated successfully',
             data: updatedInvoice,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Internal server error",
+            message: 'Error occurred while updating invoice',
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+
+// Delete invoice
+const deleteInvoice = async (req: Request, res: Response) => {
+    try {
+        const deletedInvoice = await Invoice.findByIdAndDelete(req.params.id);
+        if (!deletedInvoice) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'Invoice not found',
+            });
+        }
+        return res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'Invoice deleted successfully',
+        });
+    } catch (error) {
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error occurred while deleting invoice',
             error: error instanceof Error ? error.message : String(error),
         });
     }
 };
 
 export {
-    createInvoice,
     getInvoices,
     getInvoiceById,
-    deleteInvoiceById,
-    updateInvoiceById,
+    createInvoice,
+    updateInvoice,
+    deleteInvoice,
 };

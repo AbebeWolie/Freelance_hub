@@ -1,17 +1,11 @@
 import { Request, Response } from "express";
 import { Review } from "../models/review.model";
+import { HTTP_STATUS } from "../constants/status";
 
 // Create a new review
 const createReview = async (req: Request, res: Response) => {
   try {
     const { reviewerId, reviewedId, jobId, rating, comment } = req.body;
-
-    if (!reviewerId || !reviewedId || !jobId || !rating) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields",
-      });
-    }
 
     const newReview = new Review({
       reviewerId,
@@ -23,84 +17,90 @@ const createReview = async (req: Request, res: Response) => {
 
     await newReview.save();
 
-    return res.status(201).json({
+    res.status(HTTP_STATUS.CREATED).json({
       success: true,
       message: "Review created successfully",
       data: newReview,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to create review",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Get all reviews
-const getAllReviews = async (_req: Request, res: Response) => {
+// Get reviews for a job
+const getJobReviews = async (req: Request, res: Response) => {
   try {
-    const reviews = await Review.find()
-      .populate("reviewerId reviewedId jobId");
+    const { jobId } = req.params;
 
-    return res.status(200).json({
+    const reviews = await Review.find({ jobId }).populate("reviewerId", "name");
+
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "All reviews fetched",
+      message: "Reviews fetched successfully",
       data: reviews,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to fetch reviews",
       error: error instanceof Error ? error.message : String(error),
     });
   }
 };
 
-// Get a review by ID
-const getReviewById = async (req: Request, res: Response) => {
+// Get reviews written by a user
+const getUserReviews = async (req: Request, res: Response) => {
   try {
-    const review = await Review.findById(req.params.id)
-      .populate("reviewerId reviewedId jobId");
+    const { reviewerId } = req.params;
 
-    if (!review) {
-      return res.status(404).json({
+    const reviews = await Review.find({ reviewerId }).populate("jobId", "title");
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: "User reviews fetched successfully",
+      data: reviews,
+    });
+  } catch (error) {
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch user reviews",
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+};
+
+// Update a review (rating or comment)
+const updateReview = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { rating, comment } = req.body;
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      id,
+      { rating, comment },
+      { new: true }
+    );
+
+    if (!updatedReview) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
         message: "Review not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Review fetched",
-      data: review,
+      message: "Review updated successfully",
+      data: updatedReview,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-};
-
-// Get all reviews for a specific user (as reviewed)
-const getReviewsForUser = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.userId;
-
-    const reviews = await Review.find({ reviewedId: userId })
-      .populate("reviewerId jobId");
-
-    return res.status(200).json({
-      success: true,
-      message: "User reviews fetched",
-      data: reviews,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
+      message: "Failed to update review",
       error: error instanceof Error ? error.message : String(error),
     });
   }
@@ -109,23 +109,25 @@ const getReviewsForUser = async (req: Request, res: Response) => {
 // Delete a review
 const deleteReview = async (req: Request, res: Response) => {
   try {
-    const deleted = await Review.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
 
-    if (!deleted) {
-      return res.status(404).json({
+    const deletedReview = await Review.findByIdAndDelete(id);
+
+    if (!deletedReview) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
         message: "Review not found",
       });
     }
 
-    return res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
-      message: "Review deleted",
+      message: "Review deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Internal server error",
+      message: "Failed to delete review",
       error: error instanceof Error ? error.message : String(error),
     });
   }
@@ -133,8 +135,8 @@ const deleteReview = async (req: Request, res: Response) => {
 
 export {
   createReview,
-  getAllReviews,
-  getReviewById,
-  getReviewsForUser,
+  getJobReviews,
+  getUserReviews,
+  updateReview,
   deleteReview,
 };
