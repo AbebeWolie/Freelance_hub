@@ -94,7 +94,7 @@ const addNewAdmin = async(req : Request, res : Response)=>{
         const admin = new Admin({firstName,lastName,email,password,role,createdAt} );
         await admin.save();
         const token = jwt.sign({ userId: admin._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        await sendVerificationEmail(admin.firstName, token);
+        await sendVerificationEmail(admin.name, token);
 
         return res.status(HTTP_STATUS.CREATED).json({
             success : true,
@@ -188,7 +188,7 @@ const adminLogin = async(req : Request, res : Response)=>{
             admin : {
                 id : admin._id,
                 email : admin.email,
-                name : admin.firstName
+                name : admin.name
             }
         });
     }catch(error){
@@ -233,7 +233,7 @@ const refreshToken = async (req: Request, res: Response) => {
 
 
 //get profiles
-const getProfile = async (req: Request, res: Response) => {
+const getProfile = async (req: AuthenticatedRequest, res: Response) => {
     try {
       const adminId = req.user?.id; 
       
