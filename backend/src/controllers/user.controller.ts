@@ -3,6 +3,7 @@ import User from '../models/user.model';
 import { registerUser } from '../auth/auth.service';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { promises } from 'dns';
 
 
 // CREATE USER 
@@ -276,7 +277,7 @@ const searchUser = async (req: Request, res: Response) => {
 }
 
 
-export {
+export default {
 
     createUser,
     updateUser,

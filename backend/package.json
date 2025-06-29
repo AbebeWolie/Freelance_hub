@@ -4,7 +4,7 @@
   "description": "Freelancer Hub Backend",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node ./index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -12,8 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^6.5.0",
-    "bcrypt": "^5.1.1",
-    "bcryptjs": "^3.0.2",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -29,7 +28,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
-    "@types/jsonwebtoken": "^9.0.9",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.13.13",
     "@types/nodemailer": "^6.4.17",
     "ts-node": "^10.9.2",

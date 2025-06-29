@@ -111,7 +111,7 @@ const deleteFAQ = async (req: Request, res: Response) => {
     }
 };
 
-export {
+export default {
     getFAQs,
     getFAQById,
     createFAQ,

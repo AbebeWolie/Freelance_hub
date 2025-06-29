@@ -1,3 +1,4 @@
+import router from '../auth/auth.routes';
 import { HTTP_STATUS } from '../constants/status';
 import { Application } from '../models/application.model';
 import { Request,Response } from 'express';
@@ -116,3 +117,12 @@ const deleteApplicationById = async(req : Request, res : Response)=>{
         });
     }
 }
+
+export default {
+    getApplications,
+    getApplicationById,
+    createApplication,
+    updateApplicationById,
+    deleteApplicationById
+}
+
