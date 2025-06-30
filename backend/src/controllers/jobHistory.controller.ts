@@ -102,7 +102,7 @@ const deleteJobHistory = async (req: Request, res: Response) => {
   }
 };
 
-export {
+export default {
   getAllJobHistories,
   getJobHistoryById,
   createJobHistory,

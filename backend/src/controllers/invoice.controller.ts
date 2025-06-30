@@ -120,7 +120,7 @@ const deleteInvoice = async (req: Request, res: Response) => {
     }
 };
 
-export {
+export default {
     getInvoices,
     getInvoiceById,
     createInvoice,

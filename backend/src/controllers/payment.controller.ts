@@ -77,7 +77,7 @@ const deletePaymentMethod = async (req: Request, res: Response) => {
   }
 };
 
-export {
+export default {
   getUserPaymentMethods,
   addPaymentMethod,
   deletePaymentMethod,

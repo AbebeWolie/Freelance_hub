@@ -130,7 +130,7 @@ const deleteConversation = async (req: Request, res: Response) => {
     }
 };
 
-export {
+export default {
     getConversations,
     getConversationById,
     createConversation,

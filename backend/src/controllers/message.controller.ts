@@ -80,7 +80,7 @@ const deleteMessage = async (req: Request, res: Response) => {
   }
 };
 
-export {
+export default{
   getMessagesByConversation,
   sendMessage,
   deleteMessage,

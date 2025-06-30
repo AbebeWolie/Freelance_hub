@@ -199,7 +199,7 @@ const loginUser = async (req: Request, res: Response) => {
 // GET PROFILE
 
 const getProfile = async (req: Request, res: Response) => {
-    const { userId } = req.params;
+    const userId  = req.params.id;
     if (!userId) {
         return res.status(401).json({
             success: false,

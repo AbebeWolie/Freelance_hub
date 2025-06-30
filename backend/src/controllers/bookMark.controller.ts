@@ -99,7 +99,7 @@ const deleteBookmarkById = async (req: Request, res: Response) => {
     }
 };
 
-export {
+export default {
     getBookmarks,
     getBookmarkById,
     createBookmark,

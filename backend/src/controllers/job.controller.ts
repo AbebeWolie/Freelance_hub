@@ -125,7 +125,7 @@ const deleteJob = async (req: Request, res: Response) => {
   }
 };
 
-export {
+export default {
   getJobs,
   getJobById,
   createJob,

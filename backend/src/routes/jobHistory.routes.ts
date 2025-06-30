@@ -1,19 +1,18 @@
 import express, { Request, Response } from 'express';
-import faqController from '../controllers/faq.controller';
+import jobHistoryController from '../controllers/jobHistory.controller';
 
 const router = express.Router();
 
 const {
-  getFAQs,
-  getFAQById,
-  createFAQ,
-  updateFAQ,
-  deleteFAQ,
-} = faqController;
+  getAllJobHistories,
+  getJobHistoryById,
+  createJobHistory,
+  deleteJobHistory,
+} = jobHistoryController;
 
-router.get('/faqs', async (req: Request, res: Response) => {
+router.get('/histories', async (req: Request, res: Response) => {
   try {
-    await getFAQs(req, res);
+    await getAllJobHistories(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -23,9 +22,9 @@ router.get('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/faqs/:id', async (req: Request, res: Response) => {
+router.get('/histories/:id', async (req: Request, res: Response) => {
   try {
-    await getFAQById(req, res);
+    await getJobHistoryById(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -35,9 +34,9 @@ router.get('/faqs/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/faqs', async (req: Request, res: Response) => {
+router.post('/histories', async (req: Request, res: Response) => {
   try {
-    await createFAQ(req, res);
+    await createJobHistory(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -47,21 +46,9 @@ router.post('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.put('/faqs/:id', async (req: Request, res: Response) => {
+router.delete('/histories/:id', async (req: Request, res: Response) => {
   try {
-    await updateFAQ(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-});
-
-router.delete('/faqs/:id', async (req: Request, res: Response) => {
-  try {
-    await deleteFAQ(req, res);
+    await deleteJobHistory(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,

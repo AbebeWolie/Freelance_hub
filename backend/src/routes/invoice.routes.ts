@@ -1,19 +1,19 @@
 import express, { Request, Response } from 'express';
-import faqController from '../controllers/faq.controller';
+import invoiceController from '../controllers/invoice.controller';
 
 const router = express.Router();
 
 const {
-  getFAQs,
-  getFAQById,
-  createFAQ,
-  updateFAQ,
-  deleteFAQ,
-} = faqController;
+  getInvoices,
+  getInvoiceById,
+  createInvoice,
+  updateInvoice,
+  deleteInvoice,
+} = invoiceController;
 
-router.get('/faqs', async (req: Request, res: Response) => {
+router.get('/invoices', async (req: Request, res: Response) => {
   try {
-    await getFAQs(req, res);
+    await getInvoices(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -23,9 +23,9 @@ router.get('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/faqs/:id', async (req: Request, res: Response) => {
+router.get('/invoices/:id', async (req: Request, res: Response) => {
   try {
-    await getFAQById(req, res);
+    await getInvoiceById(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -35,9 +35,9 @@ router.get('/faqs/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/faqs', async (req: Request, res: Response) => {
+router.post('/invoices', async (req: Request, res: Response) => {
   try {
-    await createFAQ(req, res);
+    await createInvoice(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -47,9 +47,9 @@ router.post('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.put('/faqs/:id', async (req: Request, res: Response) => {
+router.put('/invoices/:id', async (req: Request, res: Response) => {
   try {
-    await updateFAQ(req, res);
+    await updateInvoice(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -59,9 +59,9 @@ router.put('/faqs/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.delete('/faqs/:id', async (req: Request, res: Response) => {
+router.delete('/invoices/:id', async (req: Request, res: Response) => {
   try {
-    await deleteFAQ(req, res);
+    await deleteInvoice(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,

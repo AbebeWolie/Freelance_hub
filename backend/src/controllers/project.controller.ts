@@ -112,7 +112,7 @@ const deleteProject = async (req: Request, res: Response) => {
   }
 };
 
-export {
+export default {
   getClientProjects,
   createProject,
   updateProjectStatus,

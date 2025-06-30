@@ -1,19 +1,19 @@
 import express, { Request, Response } from 'express';
-import faqController from '../controllers/faq.controller';
+import projectController from '../controllers/project.controller';
 
 const router = express.Router();
 
 const {
-  getFAQs,
-  getFAQById,
-  createFAQ,
-  updateFAQ,
-  deleteFAQ,
-} = faqController;
+  getClientProjects,
+  createProject,
+  updateProjectStatus,
+  deleteProject,
+} = projectController;
 
-router.get('/faqs', async (req: Request, res: Response) => {
+// Get all projects for a specific client
+router.get('/projects/client/:clientId', async (req: Request, res: Response) => {
   try {
-    await getFAQs(req, res);
+    await getClientProjects(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -23,9 +23,10 @@ router.get('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/faqs/:id', async (req: Request, res: Response) => {
+// Create a new project
+router.post('/projects', async (req: Request, res: Response) => {
   try {
-    await getFAQById(req, res);
+    await createProject(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -35,9 +36,10 @@ router.get('/faqs/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/faqs', async (req: Request, res: Response) => {
+// Update a project status
+router.put('/projects/:id/status', async (req: Request, res: Response) => {
   try {
-    await createFAQ(req, res);
+    await updateProjectStatus(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -47,21 +49,10 @@ router.post('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.put('/faqs/:id', async (req: Request, res: Response) => {
+// Delete a project
+router.delete('/projects/:id', async (req: Request, res: Response) => {
   try {
-    await updateFAQ(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-});
-
-router.delete('/faqs/:id', async (req: Request, res: Response) => {
-  try {
-    await deleteFAQ(req, res);
+    await deleteProject(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,

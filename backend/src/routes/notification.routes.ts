@@ -1,19 +1,19 @@
 import express, { Request, Response } from 'express';
-import faqController from '../controllers/faq.controller';
+import notificationController from '../controllers/notification.controller';
 
 const router = express.Router();
 
 const {
-  getFAQs,
-  getFAQById,
-  createFAQ,
-  updateFAQ,
-  deleteFAQ,
-} = faqController;
+  getUserNotifications,
+  createNotification,
+  markNotificationAsRead,
+  deleteNotification,
+} = notificationController;
 
-router.get('/faqs', async (req: Request, res: Response) => {
+// Get notifications for a user
+router.get('/users/:userId/notifications', async (req: Request, res: Response) => {
   try {
-    await getFAQs(req, res);
+    await getUserNotifications(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -23,9 +23,10 @@ router.get('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/faqs/:id', async (req: Request, res: Response) => {
+// Create a new notification
+router.post('/notifications', async (req: Request, res: Response) => {
   try {
-    await getFAQById(req, res);
+    await createNotification(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -35,9 +36,10 @@ router.get('/faqs/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/faqs', async (req: Request, res: Response) => {
+// Mark a notification as read
+router.put('/notifications/:id/read', async (req: Request, res: Response) => {
   try {
-    await createFAQ(req, res);
+    await markNotificationAsRead(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -47,21 +49,10 @@ router.post('/faqs', async (req: Request, res: Response) => {
   }
 });
 
-router.put('/faqs/:id', async (req: Request, res: Response) => {
+// Delete a notification
+router.delete('/notifications/:id', async (req: Request, res: Response) => {
   try {
-    await updateFAQ(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-});
-
-router.delete('/faqs/:id', async (req: Request, res: Response) => {
-  try {
-    await deleteFAQ(req, res);
+    await deleteNotification(req, res);
   } catch (error) {
     res.status(500).json({
       success: false,
