@@ -1,5 +1,8 @@
 import nodemailer from 'nodemailer';
 import { Admin } from '../models/admin.model';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 interface User {
   name: string;
@@ -19,7 +22,7 @@ const sendVerificationEmail = async (user: any, token: string): Promise<void> =>
   const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
 
   const mailOptions = {
-    from: 'your-email@example.com',
+    from: process.env.EMAIL_USER,
     to: user.email,
     subject: 'Verify Your Email',
     html: `
