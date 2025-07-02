@@ -133,7 +133,7 @@ const deleteReview = async (req: Request, res: Response) => {
   }
 };
 
-export {
+export default {
   createReview,
   getJobReviews,
   getUserReviews,

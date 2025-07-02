@@ -1,43 +1,18 @@
 import { Request, Response } from 'express';
 import User from '../models/user.model';
-import { registerUser } from '../auth/auth.service';
+import {login, register} from '../auth/auth.controller';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { promises } from 'dns';
+
 
 
 // CREATE USER 
 
 const createUser = async (req: Request, res: Response) => {
-    const { name, email, password, role, profile } = req.body;
-    if (!name || !email || !password || !role || !profile) {
-        return res.status(400).json({
-            success: false,
-            message: "fields (name,email,password,role,profile) are required "
-        })
-    }
-    try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(409).json({
-                success: false,
-                message: "User already existed"
-            })
-        }
-        const user = new User({
-            name,
-            email,
-            password,
-            profile,
-            role
-        });
-        await user.save();
-        return res.status(200).json({
-            success: true,
-            message: "User successfully created ! ",
-            data: user
-        })
 
+    try {
+        const user = User
+        await register(req,res,user);
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -156,41 +131,7 @@ const getUserById = async (req: Request, res: Response) => {
 // LOGIN AUTHENICATE USER
 
 const loginUser = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email })
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User Not found"
-            })
-        }
-        const isMach = await bcrypt.compare(password, user.password)
-        if (!isMach) {
-            return res.status(401).json({
-                success: false,
-                message: "Incorrect password "
-            })
-        }
-        // generate token
-        const token = jwt.sign({ userId: user._id, role: user.role }, 'secretkey', { expiresIn: '1h' })
-        if (!token) {
-            return res.status(404).json({
-                success: false,
-                message: "cannot generate token"
-            })
-        }
-        return res.status(200).json({
-            token,
-            success: false,
-            message: "Successfully Login"
-        })
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-    }
+    await login(req,res);
 }
 
 

@@ -4,8 +4,7 @@ import { HTTP_STATUS } from '../constants/status';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken';
-import { sendVerificationEmail } from '../utils/emailService';
-import { dot } from 'node:test/reporters';
+import { register } from '../auth/auth.controller';
 
 dotenv.config();
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
@@ -47,7 +46,7 @@ const getAdmins = async (req :Request,res:Response)=>{
     }catch(error){
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success : false,
-            message : "Internal Server occured while fetchin data",
+            message : "Internal Server occured while fetching data",
             error: error instanceof Error ? error.message : String(error),
         });
     }
@@ -77,31 +76,8 @@ const getAdminById =  async(req : Request, res : Response)=>{
 // Add a new admins
 const addNewAdmin = async(req : Request, res : Response)=>{
     try{
-        const {firstName,lastName,email,password,role,createdAt} = req.body;
-        if (!firstName || !lastName || !email || !password || !role) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).json({
-              success: false,
-              message: "All fields are required",
-            });
-          }
-        const existingAdmin = await findAdmins(email);
-        if(existingAdmin){
-            return res.status(HTTP_STATUS.CONFLICT).json({
-                success : false,
-                message : "Admin already exists"
-            });
-        } 
-        const admin = new Admin({firstName,lastName,email,password,role,createdAt} );
-        await admin.save();
-        const token = jwt.sign({ userId: admin._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        await sendVerificationEmail(admin.firstName, token);
-
-        return res.status(HTTP_STATUS.CREATED).json({
-            success : true,
-            message : "Successfully added !",
-            data : admin
-        });
-
+        const admin = Admin;
+        await register(req,res,admin);
     }catch(error){
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success : false,

@@ -12,6 +12,7 @@ interface IUser extends Document {
     rating: number;
     reviewsCount: number;
   };
+  isVerified:boolean;
   createdAt: Date;
 }
 
@@ -26,6 +27,7 @@ const UserSchema = new Schema<IUser>({
     rating: { type: Number, default: 0 },
     reviewsCount: { type: Number, default: 0 },
   },
+  isVerified:{type:Boolean,default:false},
   createdAt: { type: Date, default: Date.now },
 });
 
