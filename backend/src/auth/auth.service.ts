@@ -5,8 +5,7 @@ import generateToken from "../utils/jwt.utils";
 import { sendVerificationEmail } from "../utils/emailService";
 
 export const registerUser = async (data: any, model :any) => {
-  const hashedPassword = await bcrypt.hash(data.password, 10);
-  return await model.create({ ...data, password: hashedPassword });
+  return await model.create(data);
 };
 
 export const loginUser = async ({ email, password }: { email: string; password: string }) => {

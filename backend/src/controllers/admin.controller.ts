@@ -34,6 +34,7 @@ const findAdmins = async(email : string)=>{
         const  admin = await Admin.findOne({email});
         return admin;
 }
+
 // get all admins
 const getAdmins = async (req :Request,res:Response)=>{
     try{
@@ -51,6 +52,7 @@ const getAdmins = async (req :Request,res:Response)=>{
         });
     }
 }
+
 // Get one admin
 const getAdminById =  async(req : Request, res : Response)=>{
     try{
@@ -86,6 +88,7 @@ const addNewAdmin = async(req : Request, res : Response)=>{
         });
     }
 }
+
 // update admin by id
 const updateAdminById = async(req : Request, res : Response)=>{
     try{

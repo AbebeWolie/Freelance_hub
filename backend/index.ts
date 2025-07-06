@@ -39,6 +39,9 @@ import messageRoutes from './src/routes/message.routes';
 import notificationRoutes from './src/routes/notification.routes';
 import paymentMethodRoutes from './src/routes/payment.routes';
 import projectRoutes from './src/routes/project.routes';
+import authRoutes from './src/auth/auth.routes';
+import reviewRoutes from './src/routes/review.routes';
+
 
 
 
@@ -58,6 +61,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 
+app.use('/',authRoutes)
 app.use('/api/admin', adminRoutes);
 app.use('/api/user',userRoutes);
 app.use('/api/job',jobRoutes)
@@ -71,7 +75,7 @@ app.use('/api', messageRoutes);
 app.use('/api', notificationRoutes);
 app.use('/api', paymentMethodRoutes);
 app.use('/api/project', projectRoutes);
-
+app.use('/api/review', reviewRoutes);
 
 
 app.listen(PORT, () => {

@@ -9,7 +9,6 @@ import jwt from 'jsonwebtoken';
 // CREATE USER 
 
 const createUser = async (req: Request, res: Response) => {
-
     try {
         const user = User
         await register(req,res,user);
@@ -82,7 +81,7 @@ const updateUser = async (req: Request, res: Response) => {
 
 const getUser = async (req: Request, res: Response) => {
     try {
-        const user = await User.find();
+        const user = await User.find().select('-password');
         if (!user) {
             return res.status(404).json({
                 success: false,

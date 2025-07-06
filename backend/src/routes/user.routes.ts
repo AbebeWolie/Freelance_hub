@@ -16,7 +16,6 @@ const {
 
 
 
-
 router.get('/users', async(req:Request,res:Response)=>{
     try{
         await getUser(req,res);
