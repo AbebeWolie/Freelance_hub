@@ -24,7 +24,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-background shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16">
           {/* Logo and main nav (left side) */}
@@ -39,14 +39,14 @@ const Navbar = () => {
 
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-xl font-bold text-indigo-600">WorkFinder</h1>
+              <h1 className="text-xl font-bold text-primary">FreelanceHub</h1>
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               <a
                 href="#"
-                className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 <FiHome className="mr-1" />
                 Home
@@ -92,7 +92,7 @@ const Navbar = () => {
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
                 placeholder="Search jobs or freelancers"
               />
             </div>
@@ -106,11 +106,11 @@ const Navbar = () => {
             {/* User dropdown */}
             <div className="ml-4 relative">
               <button
-                className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary px-2"
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               >
                 <span className="sr-only">Open user menu</span>
-                <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
+                <div className="h-8 w-8 rounded-full bg-primary-light/20 flex items-center justify-center text-primary font-medium">
                   {user.avatar}
                 </div>
                 <span className="hidden md:inline ml-2 text-gray-700">{user.name}</span>
@@ -156,7 +156,7 @@ const Navbar = () => {
                 </div>
                 <input
                   type="text"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
                   placeholder="Search jobs or freelancers"
                 />
               </div>
@@ -166,7 +166,7 @@ const Navbar = () => {
           <div className="pt-2 pb-3 space-y-1">
             <a
               href="#"
-              className="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+              className="bg-primary border-primary text-primary block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
             >
               <FiHome className="inline mr-2" />
               Home
@@ -198,7 +198,7 @@ const Navbar = () => {
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center px-4">
               <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
+                <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary font-medium">
                   {user.avatar}
                 </div>
               </div>
