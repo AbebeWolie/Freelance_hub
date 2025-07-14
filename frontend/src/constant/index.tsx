@@ -57,131 +57,150 @@ export const upworkCategoryIcon = [
   }
 ];
 
-export const upworkCategories = [
+// export const upworkCategories = [
+//   {
+//     name: "Development & IT",
+//     subcategories: [
+//       "Web Development",
+//       "Mobile App Development",
+//       "Game Development",
+//       "Desktop Software Development",
+//       "DevOps & Cloud",
+//       "Data Science & Analytics",
+//       "Cybersecurity",
+//       "QA & Testing",
+//       "AI & Machine Learning",
+//       "Other - Development & IT"
+//     ]
+//   },
+//   {
+//     name: "Design & Creative",
+//     subcategories: [
+//       "Graphic Design",
+//       "Web & Mobile Design",
+//       "Video Editing",
+//       "Animation",
+//       "UX/UI Design",
+//       "Illustration",
+//       "3D Modeling",
+//       "Presentation Design",
+//       "Other - Design & Creative"
+//     ]
+//   },
+//   {
+//     name: "AI Services",
+//     subcategories: [
+//       "AI Model Development",
+//       "Chatbot Development",
+//       "AI Consulting",
+//       "Data Annotation",
+//       "Machine Learning",
+//       "Computer Vision",
+//       "Natural Language Processing (NLP)",
+//       "Other - AI Services"
+//     ]
+//   },
+//   {
+//     name: "Sales & Marketing",
+//     subcategories: [
+//       "Social Media Marketing",
+//       "SEO",
+//       "Lead Generation",
+//       "Marketing Strategy",
+//       "Email Marketing",
+//       "Affiliate Marketing",
+//       "Telemarketing",
+//       "Other - Sales & Marketing"
+//     ]
+//   },
+//   {
+//     name: "Writing & Translation",
+//     subcategories: [
+//       "Content Writing",
+//       "Copywriting",
+//       "Translation",
+//       "Editing & Proofreading",
+//       "Technical Writing",
+//       "Creative Writing",
+//       "Grant Writing",
+//       "Other - Writing & Translation"
+//     ]
+//   },
+//   {
+//     name: "Admin & Support",
+//     subcategories: [
+//       "Virtual Assistance",
+//       "Data Entry",
+//       "Project Management",
+//       "Customer Support",
+//       "Order Processing",
+//       "Transcription",
+//       "Other - Admin & Support"
+//     ]
+//   },
+//   {
+//     name: "Finance & Accounting",
+//     subcategories: [
+//       "Accounting",
+//       "Bookkeeping",
+//       "Financial Planning",
+//       "Tax Preparation",
+//       "Payroll",
+//       "Financial Analysis",
+//       "Other - Finance & Accounting"
+//     ]
+//   },
+//   {
+//     name: "Legal",
+//     subcategories: [
+//       "Legal Consulting",
+//       "Contract Law",
+//       "Corporate Law",
+//       "Intellectual Property",
+//       "Paralegal Services",
+//       "Other - Legal"
+//     ]
+//   },
+//   {
+//     name: "HR & Training",
+//     subcategories: [
+//       "Recruiting",
+//       "HR Administration",
+//       "Training & Development",
+//       "Career Coaching",
+//       "Onboarding & Offboarding",
+//       "Other - HR & Training"
+//     ]
+//   },
+//   {
+//     name: "Engineering & Architecture",
+//     subcategories: [
+//       "Architecture",
+//       "Civil Engineering",
+//       "Mechanical Engineering",
+//       "Electrical Engineering",
+//       "Structural Engineering",
+//       "3D Modeling & CAD",
+//       "Other - Engineering & Architecture"
+//     ]
+//   }
+// ];
+
+export const infoCards = [
   {
-    name: "Development & IT",
-    subcategories: [
-      "Web Development",
-      "Mobile App Development",
-      "Game Development",
-      "Desktop Software Development",
-      "DevOps & Cloud",
-      "Data Science & Analytics",
-      "Cybersecurity",
-      "QA & Testing",
-      "AI & Machine Learning",
-      "Other - Development & IT"
-    ]
+    title: "Get Started Today",
+    description: "Create an account and begin your journey with us in just.",
+    button: "Sign Up"
   },
   {
-    name: "Design & Creative",
-    subcategories: [
-      "Graphic Design",
-      "Web & Mobile Design",
-      "Video Editing",
-      "Animation",
-      "UX/UI Design",
-      "Illustration",
-      "3D Modeling",
-      "Presentation Design",
-      "Other - Design & Creative"
-    ]
+    title: "Explore Features",
+    description: "Learn about all the powerful tools and services we offer.",
+    button: "Learn More"
   },
   {
-    name: "AI Services",
-    subcategories: [
-      "AI Model Development",
-      "Chatbot Development",
-      "AI Consulting",
-      "Data Annotation",
-      "Machine Learning",
-      "Computer Vision",
-      "Natural Language Processing (NLP)",
-      "Other - AI Services"
-    ]
-  },
-  {
-    name: "Sales & Marketing",
-    subcategories: [
-      "Social Media Marketing",
-      "SEO",
-      "Lead Generation",
-      "Marketing Strategy",
-      "Email Marketing",
-      "Affiliate Marketing",
-      "Telemarketing",
-      "Other - Sales & Marketing"
-    ]
-  },
-  {
-    name: "Writing & Translation",
-    subcategories: [
-      "Content Writing",
-      "Copywriting",
-      "Translation",
-      "Editing & Proofreading",
-      "Technical Writing",
-      "Creative Writing",
-      "Grant Writing",
-      "Other - Writing & Translation"
-    ]
-  },
-  {
-    name: "Admin & Support",
-    subcategories: [
-      "Virtual Assistance",
-      "Data Entry",
-      "Project Management",
-      "Customer Support",
-      "Order Processing",
-      "Transcription",
-      "Other - Admin & Support"
-    ]
-  },
-  {
-    name: "Finance & Accounting",
-    subcategories: [
-      "Accounting",
-      "Bookkeeping",
-      "Financial Planning",
-      "Tax Preparation",
-      "Payroll",
-      "Financial Analysis",
-      "Other - Finance & Accounting"
-    ]
-  },
-  {
-    name: "Legal",
-    subcategories: [
-      "Legal Consulting",
-      "Contract Law",
-      "Corporate Law",
-      "Intellectual Property",
-      "Paralegal Services",
-      "Other - Legal"
-    ]
-  },
-  {
-    name: "HR & Training",
-    subcategories: [
-      "Recruiting",
-      "HR Administration",
-      "Training & Development",
-      "Career Coaching",
-      "Onboarding & Offboarding",
-      "Other - HR & Training"
-    ]
-  },
-  {
-    name: "Engineering & Architecture",
-    subcategories: [
-      "Architecture",
-      "Civil Engineering",
-      "Mechanical Engineering",
-      "Electrical Engineering",
-      "Structural Engineering",
-      "3D Modeling & CAD",
-      "Other - Engineering & Architecture"
-    ]
+    title: "Join Our Community",
+    description: "Connect with other users and get support from our team.",
+    button: "Join Now"
   }
+  
 ];
