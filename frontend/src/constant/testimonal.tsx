@@ -28,7 +28,7 @@ export const testimonials = [
     author: {
       name: "Haris S.",
       role: "Full-Stack Developer",
-      date: "Apr 7, 2025",
+      date: new Date(Date.now()),
       avatar: avatar1
     },
   },
@@ -41,7 +41,7 @@ export const testimonials = [
     author: {
       name: "Haris S.",
       role: "Full-Stack Developer",
-      date: "May 12, 2025",
+      date: new Date(Date.now()),
       avatar: avatar2
     },
   },
@@ -54,7 +54,7 @@ export const testimonials = [
     author: {
       name: "Haris S.",
       role: "Full-Stack Developer",
-      date: "Jun 1, 2025",
+      date: new Date(Date.now()),
       avatar: avatar4
     },
   },
@@ -67,7 +67,7 @@ export const testimonials = [
     author: {
       name: "Haris S.",
       role: "Full-Stack Developer",
-      date: "Jul 4, 2025",
+      date: new Date(Date.now()),
       avatar: avatar5
     },
   },
@@ -80,7 +80,7 @@ export const testimonials = [
     author: {
       name: "Haris S.",
       role: "Full-Stack Developer",
-      date: "Jul 10, 2025",
+      date: new Date(Date.now()),
       avatar: avatar6
     },
   },
@@ -93,7 +93,7 @@ export const testimonials = [
     author: {
       name: "Haris S.",
       role: "Full-Stack Developer",
-      date: "Jul 14, 2025",
+      date: new Date(Date.now()),
       avatar: avatar3
     },
   },

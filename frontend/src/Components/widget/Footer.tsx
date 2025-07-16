@@ -18,7 +18,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="mb-6">
             <h3 className="text-xl font-bold mb-4 flex items-center">
-              <span className="bg-indigo-600 rounded-md px-2 py-1 mr-2">WF</span>
+              <span className="bg-primary rounded-md px-2 py-1 mr-2">WF</span>
               WorkFinder
             </h3>
             <p className="text-gray-400 mb-4">
@@ -118,20 +118,20 @@ const Footer = () => {
             </h4>
             <ul className="space-y-3">
               <li className="flex items-start">
-                <FiMapPin className="mt-1 mr-3 flex-shrink-0 text-indigo-400" />
+                <FiMapPin className="mt-1 mr-3 flex-shrink-0 text-primary" />
                 <span className="text-gray-400">
                   123 Business Ave, Suite 500<br />
                   San Francisco, CA 94107
                 </span>
               </li>
               <li className="flex items-center">
-                <FiMail className="mr-3 flex-shrink-0 text-indigo-400" />
+                <FiMail className="mr-3 flex-shrink-0 text-primary" />
                 <a href="mailto:contact@workfinder.com" className="text-gray-400 hover:text-white transition">
                   contact@workfinder.com
                 </a>
               </li>
               <li className="flex items-center">
-                <FiPhone className="mr-3 flex-shrink-0 text-indigo-400" />
+                <FiPhone className="mr-3 flex-shrink-0 text-primary" />
                 <a href="tel:+18005551234" className="text-gray-400 hover:text-white transition">
                   (800) 555-1234
                 </a>
@@ -151,12 +151,12 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Your email address"
-                className="flex-grow px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-grow px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-primary-light"
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+                className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary transition"
               >
                 Subscribe
               </button>

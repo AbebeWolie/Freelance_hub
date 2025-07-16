@@ -3,8 +3,12 @@ import Category from "../Components/widget/CategoryCard";
 import Hero from "../Components/widget/Hero";
 import InfoCard from "../Components/widget/InfoCards";
 import PricingCard from "../Components/widget/PricingCard";
+import { testimonials } from "../constant/testimonal";
 import { infoCards, pricinngs, upworkCategoryIcon } from "../constant";
 import { useState } from "react";
+import ClientTestimonialCard from "../Components/widget/ClientTestimonialCard";
+import Explore from "../Components/widget/Explore";
+import Footer from "../Components/widget/Footer";
 
 const Home = () => {
     const [toggle, setToggle] = useState("hiring");
@@ -78,6 +82,22 @@ const Home = () => {
                     ))}
                 </div>
             </div>
+{/* CLIENT TESTIMONIALS SECTION */}
+            <div className="flex justify-center items-center pt-15 pb-15 ">
+                <div><a href="#" className="hover:underline font-sans font-semibold text-primary">Compare all plan features</a></div>
+            </div>
+            <h1 className="px-10 py-5 text-2xl font-semibold font-inter text-gray-800">Real resualts from Clients</h1>
+            <div className="grid grid-cols-3 p-8 gap-4">
+                {testimonials.map((testimonials)=>(
+                    <ClientTestimonialCard icon={testimonials.icon} category={testimonials.category} quote={testimonials.quote} rating={testimonials.rating} author={testimonials.author}  />
+                ))}
+            </div>
+{/* EXPLORE SECTION */}
+
+                <Explore />
+                <Footer />
+
+
         </div>
     );
 };
