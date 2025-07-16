@@ -1,7 +1,9 @@
+import Advert from "../Components/widget/Advert";
 import Category from "../Components/widget/CategoryCard";
 import Hero from "../Components/widget/Hero";
 import InfoCard from "../Components/widget/InfoCards";
-import { infoCards, upworkCategoryIcon } from "../constant";
+import PricingCard from "../Components/widget/PricingCard";
+import { infoCards, pricinngs, upworkCategoryIcon } from "../constant";
 import { useState } from "react";
 
 const Home = () => {
@@ -49,6 +51,7 @@ const Home = () => {
             </div>
 
             {/* Info Cards */}
+            
             <div className="grid grid-cols-3 gap-4 p-4">
                 {infoCards.map((item, index) => (
                     <InfoCard
@@ -58,6 +61,22 @@ const Home = () => {
                         button={item.button}
                     />
                 ))}
+            </div>
+
+            {/* ADVERT SECTION */}
+
+            <Advert />
+
+            {/* PRICING SECTION */}
+
+            <div className="w-[90%] mx-auto flex flex-col gap-10 relative" >
+                <h1 className="flex justify-center items-center text-4xl font-inter p-10">Clients only pay after hiring</h1>
+                <button className=" felx justify-center items-center w-[7%] bg-black  text-white mx-auto rounded-2xl absolute right-103 top-52"> Popular</button>
+                <div className="grid grid-cols-3 gap-4">
+                    {pricinngs.map((price,index)=>(
+                        <PricingCard key={index} title={price.title} plan={price.plan} description={price.description} benefits={price.benefits} button={price.button} />
+                    ))}
+                </div>
             </div>
         </div>
     );
