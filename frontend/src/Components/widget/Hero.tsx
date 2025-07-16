@@ -5,9 +5,10 @@ const Hero = () => {
     <div className="h-[100vh] w-[100vw] flex justify-center items-center text-white">
       <div
         className="w-full h-full md:h-[90%] md:w-[85%] lg:rounded-3xl 
-                   bg-[url('../../../src/assets/hero.jpg')] bg-center bg-cover"
+                   bg-[url('../../../src/assets/hero3.jpg')] bg-center bg-cover relative"
       >
-        <div className='py-[13%]'>
+        <div className='absolute inset-0 bg-black opacity-50 rounded-3xl'></div>
+        <div className='py-[13%] relative z-10 text-white p-8'>
           <div className="p-6 mt-2">
             <h1 className="text-white text-6xl font-inter">
               Connecting clients in <br /> need to freelancers <br /> who deliver
