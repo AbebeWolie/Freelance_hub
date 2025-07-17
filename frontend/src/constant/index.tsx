@@ -13,7 +13,6 @@ import {
   FaTools,       // Engineering & Architecture
   FaUniversity   // Finance & Accounting
 } from 'react-icons/fa';
-import { title } from 'process';
 
 export const upworkCategoryIcon = [
   {
@@ -213,20 +212,23 @@ export const pricinngs = [
     plan:'5% fee after hiring',
     description:'For starting out on our global freelancer marketplace',
     benefits:['Free to post jobs on our global freelance marketplace','AI-powered features','Collaboration and project tracking tools'],
-    button:'Get started for free'
+    button:'Get started for free',
+    isPopular:false
   },
   {
     title:'BUSINESS PLUS',
     plan:'10% fee after hiring',
     description:'For growing businesses with premium features and support',
     benefits:['Free to post jobs on our global freelance marketplace','AI-powered features','Collaboration and project tracking tools'],
-    button:'Get started for free'
+    button:'Get started for free',
+    isPopular:true
   },
   {
     title:'MARKET PLACE',
     plan:'5% fee after hiring',
     description:'For starting out on our global freelancer marketplace',
     benefits:['Free to post jobs on our global freelance marketplace','AI-powered features','Collaboration and project tracking tools'],
-    button:'Contact sales'
+    button:'Contact sales',
+    isPopular:false
   }
 ]

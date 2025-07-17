@@ -75,10 +75,10 @@ const Home = () => {
 
             <div className="w-[90%] mx-auto flex flex-col gap-10 relative" >
                 <h1 className="flex justify-center items-center text-4xl font-inter p-10">Clients only pay after hiring</h1>
-                <button className=" felx justify-center items-center w-[7%] bg-black  text-white mx-auto rounded-2xl absolute right-103 top-52"> Popular</button>
+                {/* <button className=" felx justify-center items-center w-[7%] bg-black  text-white mx-auto rounded-2xl absolute right-103 top-52"> Popular</button> */}
                 <div className="grid grid-cols-3 gap-4">
                     {pricinngs.map((price,index)=>(
-                        <PricingCard key={index} title={price.title} plan={price.plan} description={price.description} benefits={price.benefits} button={price.button} />
+                        <PricingCard key={index} title={price.title} plan={price.plan} description={price.description} benefits={price.benefits} button={price.button} isPopular={price.isPopular} />
                     ))}
                 </div>
             </div>
@@ -88,8 +88,8 @@ const Home = () => {
             </div>
             <h1 className="px-10 py-5 text-2xl font-semibold font-inter text-gray-800">Real resualts from Clients</h1>
             <div className="grid grid-cols-3 p-8 gap-4">
-                {testimonials.map((testimonials)=>(
-                    <ClientTestimonialCard icon={testimonials.icon} category={testimonials.category} quote={testimonials.quote} rating={testimonials.rating} author={testimonials.author}  />
+                {testimonials.map((testimonials,index)=>(
+                    <ClientTestimonialCard key={index} icon={testimonials.icon} category={testimonials.category} quote={testimonials.quote} rating={testimonials.rating} author={testimonials.author}  />
                 ))}
             </div>
 {/* EXPLORE SECTION */}

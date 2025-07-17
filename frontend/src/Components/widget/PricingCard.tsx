@@ -6,13 +6,22 @@ interface IPricingCard{
   description:string;
   benefits:string[];
   button:string;
+  isPopular:boolean;
 }
 
-const PricingCard:React.FC<IPricingCard> = ({title,plan,description,benefits,button})=>{
+const PricingCard:React.FC<IPricingCard> = ({title,plan,description,benefits,button,isPopular})=>{
   const [hover , setHover] = useState(false);
   return(
-    <div onMouseEnter={()=>setHover(true)}onMouseLeave ={()=>setHover(false)} className="p-12 shadow-2xl rounded-2xl shadow-gray-400 transition hover:border-[0.5px] border-primary">
-      <div className="flex flex-col gap-7">
+    <div onMouseEnter={()=>setHover(true)}onMouseLeave ={()=>setHover(false)} 
+      className="p-12 shadow-2xl rounded-2xl shadow-gray-400 transition hover:border-[0.5px]
+       border-primary"
+       >
+      <div className="flex flex-col gap-7 relative">
+        {isPopular? <button className=" felx justify-center items-center w-[30%]
+         bg-black  text-white mx-auto rounded-2xl absolute right-0 top-0"
+         >
+           Popular</button>:""
+        }
         <div>
           <h3>{title}</h3>
           <h1 className="text-2xl font-semibold">{plan}</h1>
