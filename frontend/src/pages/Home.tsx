@@ -15,16 +15,16 @@ const Home = () => {
 
     return (
         <div>
-            <Hero />
+            {/* <Hero /> */}
 
             {/* Categories Section */}
-            <div className="p-10">
+            <div className="p-1 md:p-4 lg:p-10">
                 <div className="p-6">
-                    <h1 className="text-3xl font-inter font-semibold">
+                    <h1 className="text-2xl md:text-3xl font-inter font-semibold">
                         Explore millions of pros
                     </h1>
                 </div>
-                <div className="grid grid-cols-5 gap-7 p-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7 p-4">
                     {upworkCategoryIcon.map((item, index) => (
                         <Category
                             key={index}
@@ -36,27 +36,25 @@ const Home = () => {
             </div>
 
             {/* Info Header */}
-            <div className="flex justify-between p-14">
-                <h1 className="text-3xl font-inter">How it works</h1>
+            <div className="flex flex-col md:flex-row justify-between p-1 md:p-14 gap-y-6 md:gap-0 bg-red-500">
+                <h1 className="text-3xl font-inter bg-white flex justify-center items-center md:justify-start md:items-start">How it works</h1>
                 <div
-                    className="flex justify-around w-[30%] border 
+                    className="flex justify-around w-full md:w-[50%] lg:w-[30%] border 
                                border-gray-400 rounded-4xl 
                                font-inter text-xl"
                 >
-                    <button onClick={()=>setToggle('hiring')} className={`${toggle ==="hiring" ? " border-3 border-gray-950 w-1/2 text-center py-2 rounded-4xl" : " w-1/2 text-center py-2 border-gray-700 rounded-4xl"}`}>
+                    <button onClick={()=>setToggle('hiring')} className={`${toggle ==="hiring" ? " border-3 border-gray-950 w-1/2 text-center py-1 md:py-2 rounded-4xl" : " w-1/2 text-center py-1 md:py-2 border-gray-700 rounded-4xl"}`}>
                         For hiring
                     </button>
-                    <button onClick={()=>setToggle('working')} className={`${toggle==="working" ? "border-3 border-gray-950 w-1/2 text-center py-2 rounded-4xl px-3": "w-1/2 text-center py-2 border-gray-700 rounded-4xl"}`}>
+                    <button onClick={()=>setToggle('working')} className={`${toggle==="working" ? "border-3 border-gray-950 w-1/2 text-center py-1 md:py-2 rounded-4xl px-1 md:px-3": "w-1/2 text-center py-1 md:py-2 border-gray-700 rounded-2xl md:rounded-4xl"}`}>
                         For finding work
                     </button>
                 </div>
-
-
             </div>
 
             {/* Info Cards */}
             
-            <div className="grid grid-cols-3 gap-4 p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
                 {infoCards.map((item, index) => (
                     <InfoCard
                         key={index}

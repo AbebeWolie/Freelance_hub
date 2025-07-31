@@ -13,7 +13,7 @@ const PricingCard:React.FC<IPricingCard> = ({title,plan,description,benefits,but
   const [hover , setHover] = useState(false);
   return(
     <div onMouseEnter={()=>setHover(true)}onMouseLeave ={()=>setHover(false)} 
-      className="p-12 shadow-2xl rounded-2xl shadow-gray-400 transition hover:border-[0.5px]
+      	className="p-12 shadow-2xl rounded-2xl shadow-gray-400 transition hover:border-[0.5px]
        border-primary"
        >
       <div className="flex flex-col gap-7 relative">

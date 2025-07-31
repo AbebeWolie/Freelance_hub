@@ -22,7 +22,7 @@ const ClientTestimonialCard:React.FC<ITestimonial> = ({icon,category,quote,ratin
         <h3 className="flex justify-center items-center p-1.5">{icon}</h3>
         <h3 className="flex justify-center items-center p-1.5">{category}</h3>
      </div>
-      <div>
+      <div className="mb-11">
         "{quote}"
         {rating}
       </div>
