@@ -36,8 +36,8 @@ const Home = () => {
             </div>
 
             {/* Info Header */}
-            <div className="flex flex-col md:flex-row justify-between p-1 md:p-14 gap-y-6 md:gap-0 bg-red-500">
-                <h1 className="text-3xl font-inter bg-white flex justify-center items-center md:justify-start md:items-start">How it works</h1>
+            <div className="flex flex-col md:flex-row justify-between p-2 md:p-14 gap-y-6 md:gap-0">
+                <h1 className="text-3xl font-inter flex justify-center items-center md:justify-start md:items-start">How it works</h1>
                 <div
                     className="flex justify-around w-full md:w-[50%] lg:w-[30%] border 
                                border-gray-400 rounded-4xl 
@@ -72,9 +72,9 @@ const Home = () => {
             {/* PRICING SECTION */}
 
             <div className="w-[90%] mx-auto flex flex-col gap-10 relative" >
-                <h1 className="flex justify-center items-center text-4xl font-inter p-10">Clients only pay after hiring</h1>
+                <h1 className="flex justify-center items-center text-xl md:text-4xl font-inter p-10">Clients only pay after hiring</h1>
                 {/* <button className=" felx justify-center items-center w-[7%] bg-black  text-white mx-auto rounded-2xl absolute right-103 top-52"> Popular</button> */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pricinngs.map((price,index)=>(
                         <PricingCard key={index} title={price.title} plan={price.plan} description={price.description} benefits={price.benefits} button={price.button} isPopular={price.isPopular} />
                     ))}
@@ -84,8 +84,8 @@ const Home = () => {
             <div className="flex justify-center items-center pt-15 pb-15 ">
                 <div><a href="#" className="hover:underline font-sans font-semibold text-primary">Compare all plan features</a></div>
             </div>
-            <h1 className="px-10 py-5 text-2xl font-semibold font-inter text-gray-800">Real resualts from Clients</h1>
-            <div className="grid grid-cols-3 p-8 gap-4">
+            <h1 className="px-10 py-5 text-xl md:text-2xl font-bold md:font-semibold font-inter text-gray-800">Real resualts from Clients</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-8 gap-4">
                 {testimonials.map((testimonials,index)=>(
                     <ClientTestimonialCard key={index} icon={testimonials.icon} category={testimonials.category} quote={testimonials.quote} rating={testimonials.rating} author={testimonials.author}  />
                 ))}
